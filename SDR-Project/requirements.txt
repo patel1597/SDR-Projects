@@ -1,0 +1,26 @@
+# Hardware:
+- RTL-SDR Blog V3 (R820T tuner)
+- Dipole antenna
+
+# Technologies:
+- Python 3.12, NumPy, Matplotlib, SciPy
+- FFT-based signal processing
+- Peak detection algorithms
+
+# Installation:
+# pip3 install -r requirements.txt --break-system-packages
+
+# Core Dependencies
+numpy>=2.0.0
+matplotlib>=3.10.0
+scipy>=1.16.0
+pyrtlsdr>=0.3.0
+
+# ADS-B / Mode S decoding
+pyModeS>=2.19.0
+
+# Audio Processing (for FM demodulator)
+pyaudio>=0.2.14
+
+# Utilities
+setuptools>=69.0.0
