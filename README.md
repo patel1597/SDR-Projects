@@ -1,6 +1,6 @@
 # RTL-SDR Projects
 
-RF engineering projects built over Winter Break 2024 using Software-Defined Radio.
+RF engineering projects built over Winter Break 2024 using Software-Defined Radio andd Python.
 
 ---
 
