@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 1. SETTINGS
-filename = 'meteor_doppler_20260101_145021.iq'  # Change this to your actual file name
+# Use the full path so there is no guessing
+filename = '/Users/rahilpatel/Documents/GitHub/SDR-Projects/SDR-Project/METEOR_SATELLITE/meteor_METEOR-M2-4_140625.iq'  # Change this to your actual file name
 fs = 1.0e6                     # Sample rate
 
 # 2. LOAD DATA

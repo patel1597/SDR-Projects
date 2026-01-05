@@ -11,11 +11,12 @@ GAIN = 40.0
 RECORD_SECONDS = 900
 MIN_ELEVATION = 10.0 
 
+# Updated TLEs for Jan 5, 2026
 sats_info = {
-    "METEOR-M2-3": ("1 57166U 23091A   26001.57598228  .00000071  00000+0  49901-4 0  9999",
-                    "2 57166  98.6349  59.7662 0002969 302.9025  57.1867 14.24028888130809"),
-    "METEOR-M2-4": ("1 59051U 24039A   26001.61231182  .00000098  00000+0  63505-4 0  9990",
-                    "2 59051  98.6794 323.2123 0006119 296.7927  63.2625 14.22405061 95586")
+    "METEOR-M2-3": ("1 57166U 23091A   26005.51071556  .00000047  00000+0  39593-4 0  9996",
+                    "2 57166  98.6342  63.6309 0002894 287.5113  72.5749 14.24029570131368"),
+    "METEOR-M2-4": ("1 59051U 24039A   26005.55153020  .00000049  00000+0  41673-4 0  9999",
+                    "2 59051  98.6800 327.0910 0006012 283.4655  76.5853 14.22405817 96145")
 }
 
 chicago = ephem.Observer()
@@ -46,7 +47,6 @@ for name, (l1, l2) in sats_info.items():
     alt = np.degrees(sat.alt)
     if alt > MIN_ELEVATION:
         sdr.center_freq = get_doppler(sat)
-        # Power measurement
         pwr = 10 * np.log10(np.mean(np.abs(sdr.read_samples(256*1024))**2))
         print(f"Checking {name}: Alt {alt:.1f}°, Signal {pwr:.2f} dB")
         if pwr > best_strength:
@@ -59,29 +59,46 @@ if not best_sat_obj:
     sdr.close()
     exit()
 
-# --- RECORDING LOOP ---
-filename = f"meteor_AUTO_{datetime.now().strftime('%H%M%S')}.iq"
-print(f"\n>>> LOCK ON: {best_sat_obj.name} | Recording to: {filename}")
+# --- RECORDING & LOGGING ---
+timestamp_str = datetime.now().strftime('%H%M%S')
+filename_iq = f"meteor_{best_sat_obj.name}_{timestamp_str}.iq"
+filename_log = f"doppler_log_{timestamp_str}.csv"
+
+print(f"\n>>> LOCK ON: {best_sat_obj.name}")
+print(f"Recording IQ to: {filename_iq}")
+print(f"Logging Doppler to: {filename_log}")
 
 try:
-    with open(filename, 'wb') as f:
+    with open(filename_iq, 'wb') as f_iq, open(filename_log, 'w') as f_log:
+        # Write CSV Header for your portfolio graph
+        f_log.write("Timestamp,Altitude_Deg,Frequency_Hz\n")
+        
         num_chunks = int((SAMPLE_RATE * RECORD_SECONDS) / (256*1024))
         for i in range(num_chunks):
-            # Hardware Doppler Tracking
-            sdr.center_freq = get_doppler(best_sat_obj)
+            # 1. Update Hardware Frequency
+            current_f = get_doppler(best_sat_obj)
+            sdr.center_freq = current_f
+            
+            # 2. Capture Samples
             samples = sdr.read_samples(256*1024)
             
-            # Conversion to 8-bit Interleaved IQ
+            # 3. Save IQ Data (8-bit Interleaved)
             iq = np.empty(samples.size * 2, dtype=np.uint8)
             iq[0::2] = (samples.real * 127.5 + 127.5).astype(np.uint8)
             iq[1::2] = (samples.imag * 127.5 + 127.5).astype(np.uint8)
-            f.write(iq.tobytes())
+            f_iq.write(iq.tobytes())
             
-            if i % 25 == 0:
-                print(f"Tracking {best_sat_obj.name} | Alt: {np.degrees(best_sat_obj.alt):.1f}° | Progress: {i/num_chunks*100:.1f}%", end='\r')
+            # 4. Log Telemetry every ~1 second
+            if i % 4 == 0:
+                best_sat_obj.compute(chicago)
+                alt_deg = np.degrees(best_sat_obj.alt)
+                time_now = datetime.now().strftime('%H:%M:%S.%f')[:-3]
+                f_log.write(f"{time_now},{alt_deg:.2f},{current_f:.2f}\n")
+                
+                print(f"Tracking {best_sat_obj.name} | Alt: {alt_deg:.1f}° | Freq: {current_f/1e6:.4f} MHz | {i/num_chunks*100:.1f}%", end='\r')
 
 except KeyboardInterrupt:
-    print("\n[!] User stopped recording early.")
+    print("\n[!] User stopped recording.")
 finally:
-    sdr.close() # <--- THIS keeps your SDR from melting
-    print("SDR powered down. File closed.")
+    sdr.close()
+    print(f"\nSDR Powered Down. IQ file and Doppler CSV saved successfully.")
