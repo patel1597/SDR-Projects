@@ -19,8 +19,8 @@ chicago.lat, chicago.lon, chicago.elev = '42.11', '-88.03', 240
 
 # updated TLEs for Meteor M2-4 (make sure these are changed -- https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&amp;FORMAT=tle)
 name = "METEOR-M2-4"
-l1 = "1 59051U 24039A   26014.62579603  .00000005  00000+0  21828-4 0  9998"
-l2 = "2 59051  98.6812 336.0269 0005985 252.4496 107.6028 14.22407185 97435"
+l1 = "1 59051U 24039A   26015.61059980 -.00000001  00000+0  19235-4 0  9995"
+l2 = "2 59051  98.6813 336.9967 0006003 249.0894 110.9641 14.22407283 97578"
 m24 = ephem.readtle(name, l1, l2)
 
 
