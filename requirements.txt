@@ -1,26 +1,23 @@
-# Hardware:
-- RTL-SDR Blog V3 (R820T tuner)
-- Dipole antenna
+# Make sure to have the proper system dependencies: I used a Mac. 
+#   macOS: brew install rtl-sdr
+#   macOS: brew install portaudio
 
-# Technologies:
-- Python 3.12, NumPy, Matplotlib, SciPy
-- FFT-based signal processing
-- Peak detection algorithms
-
-# Installation:
-# pip3 install -r requirements.txt --break-system-packages
-
-# Core Dependencies
+# Core Signal Processing & Math
 numpy>=2.0.0
-matplotlib>=3.10.0
 scipy>=1.16.0
+matplotlib>=3.10.0
+
+# SDR Hardware Interface
 pyrtlsdr>=0.3.0
 
-# ADS-B / Mode S decoding
+# FM Radio Audio
+pyaudio>=0.2.14
+
+# ADS-B Decoding
 pyModeS>=2.19.0
 
-# Audio Processing (for FM demodulator)
-pyaudio>=0.2.14
+# Satellite Tracking & Doppler
+pyephem>=4.1.5
 
 # Utilities
 setuptools>=69.0.0

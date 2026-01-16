@@ -62,6 +62,7 @@ while True:
     mag = np.abs(samples) # will calulate the magnitude of the complex samples
     # loop through the magnitude array
     i = 0
+    # used this website -- https://mode-s.org/1090mhz/content/ads-b/1-basics.html to figure out the bits
     while i < len(mag) - 250: # we need 250 samples ahead to decode the full message (there are 112 bits and 2 samples per bit so 224 samples minimum this just gives a buffer)
         if mag[i] > THRESH: # needs to exceed the threshold
             bits = []
