@@ -121,15 +121,15 @@ Automated reception and decoding of multispectral Earth-observation imagery (USA
 
 # Main Lessons Learned:
 
-# Antenna Geometry & Impedance Matching:
+## Antenna Geometry & Impedance Matching:
 
 - At first, I set up the antenna wrong, including its polarization. But after I got my HAM radio license, I corrected orientation to parallel-to-surface for optimal circular polarization reception
 - As for the length and angle of the antenna, I found a reddit link: https://www.reddit.com/r/amateursatellites/comments/jkhaz8/using_a_vdipole_antenna_to_receive_noaa_apt_and/
 
-# Disk I/O Latency:
+## Disk I/O Latency:
 
 - Discovered that writing 1.024+ million samples per second to disk in Python can cause "dropped samples." This resulted in black sync-loss lines in satellite images, highlighting the trade-off between Python's ease of use and using SatDump to record to take care of these tweaks.
 
-# Antenna Radiation Patterns:
+## Antenna Radiation Patterns:
 
 - Observed that signal gain dropped at peak elevation (70°), identifying physical antenna "nulls" and the importance of ground-plane reflections in my DIY setup.
